@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+       xmlns:context="http://www.springframework.org/schema/context"
+
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+               http://www.springframework.org/schema/context
+               http://www.springframework.org/schema/context/spring-context.xsd
+
+              "
+
+   >
+
+    <!--1.配置连接池信息-->
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <!--最大连接数-->
+        <property name="maxTotal" value="50"></property>
+        <!--最大空闲数MaxIdle-->
+        <property name="maxIdle" value="5"></property>
+    </bean>
+    <!--2.Spring整合Jedis（Redis）-->
+    <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <!--指定服务器地址-->
+        <property name="hostName" value="192.168.76.132"></property>
+        <!--指定服务端口号-->
+        <property name="port" value="6379"></property>
+        <!--指定密码-->
+        <property name="password" value="990305"></property>
+
+        <!--自定义连接池配置-->
+        <property name="poolConfig" ref="jedisPoolConfig"></property>
+    </bean>
+    <!--3.RedisTemplate-->
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="jedisConnectionFactory"></property>
+
+        <!--key进行序列化设置 默认jdk改为字符串的-->
+        <property name="keySerializer" >
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+        </property>
+
+        <!--value 默认jdk改为String-->
+        <property name="valueSerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+        </property>
+
+       <!-- &lt;!&ndash;hash key序列化设置 默认jdk改为String&ndash;&gt;
+        <property name="hashKeySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+        </property>-->
+        </bean>
+    <!--配置spring创建容器时要扫描的包-->
+    <context:component-scan base-package="com.qfjy"></context:component-scan>
+</beans>
